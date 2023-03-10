@@ -54,6 +54,7 @@ jobs:
         run: |
           echo "tag=$(cat ../version)"  >> $GITHUB_ENV;
           sed -i 's|/usr/pgsql/13/share/postgresql.conf.sample|/usr/pgsql/13/share/postgresql/postgresql.conf.sample|g' ./make/photon/db/Dockerfile.base;
+          sed -i '15d' ./make/photon/db/Dockerfile.base;
 
       - name: Build base image
         uses: docker/build-push-action@v3
