@@ -44,16 +44,16 @@ jobs:
           driver-opts: network=host
       - uses: docker/login-action@v2
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: registry.cn-hangzhou.aliyuncs.com
+          username: ${{ secrets.REG_USERNAME }}
+          password: ${{ secrets.REG_PASS }}
 
       - run: cd .. && make patch
 
       - id: prepare
         run: |
           echo "tag=$(cat ../version)"  >> $GITHUB_ENV;
-          ls;
+          tree;
 
       - name: Build base image
         uses: docker/build-push-action@v3
@@ -65,7 +65,7 @@ jobs:
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.revision=${{ env.tag }}
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ghcr.io/${{ github.repository }}/harbor-${{ matrix.component }}-base:${{ env.tag }}
+          tags: registry.cn-hangzhou.aliyuncs.com/${{ secrets.NS }}/harbor-${{ matrix.component }}-base:${{ env.tag }}
 
   docker-image:
     needs:
@@ -113,9 +113,9 @@ jobs:
 
       - uses: docker/login-action@v2
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: registry.cn-hangzhou.aliyuncs.com
+          username: ${{ secrets.REG_USERNAME }}
+          password: ${{ secrets.REG_PASS }}
 
       - run: cd .. && make patch
 
@@ -124,8 +124,8 @@ jobs:
 
       - name: Build & Publish images
         env:
-          IMAGENAMESPACE: ghcr.io/${{ github.repository }}
-          BASEIMAGENAMESPACE: ghcr.io/${{ github.repository }}
+          IMAGENAMESPACE: registry.cn-hangzhou.aliyuncs.com/${{ secrets.NS }}
+          BASEIMAGENAMESPACE: registry.cn-hangzhou.aliyuncs.com/${{ secrets.NS }}
           IMAGELABELS: org.opencontainers.image.source=https://github.com/${{ github.repository }}
           MULTIARCH: true
           TRIVYFLAG: true
